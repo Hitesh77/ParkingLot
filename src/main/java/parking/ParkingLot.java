@@ -7,6 +7,7 @@ public class ParkingLot {
 
     ParkingRate rate = new ParkingRate();
     Map<Integer, ParkingSpot> spots = new LinkedHashMap<>();
+    Map<String, TreeSet<ParkingSpot>> typeToParkingSpot = new LinkedHashMap<>();
     Map<Integer, ParkingTicket> tickets = new HashMap<>();
     List<DisplayBoard> boards = new ArrayList<>();
 
