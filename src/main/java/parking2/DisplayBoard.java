@@ -21,4 +21,14 @@ public class DisplayBoard {
         for (ParkingSpotType parkingSpotType : vehicleTypeToParkingSpot.keySet())
             System.out.printf("%-15s %d%n", parkingSpotType, vehicleTypeToParkingSpot.get(parkingSpotType).size());
     }
+
+    public void showFloorFreeSlot() {
+        System.out.println("\nFloorNo Free slots by type:");
+        System.out.printf("%-10s %-15s %-10s%n ", "Floor No","Type", "Count");
+        List<Floor> floors = FloorParkingLot.getInstance().floors;
+        for(Floor floor: floors) {
+            for (ParkingSpotType parkingSpotType : floor.vehicleTypeToParkingSpot.keySet())
+                System.out.printf("%-10s %-15s %-10s%n ", floor.id, parkingSpotType, floor.vehicleTypeToParkingSpot.get(parkingSpotType).size());
+        }
+    }
 }

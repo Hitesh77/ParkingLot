@@ -5,22 +5,22 @@ import main.java.parking.CreditCard;
 
 import java.util.*;
 
-public class ParkingLot {
-    private static ParkingLot parkingLot;
+public class FloorParkingLot {
+    private static FloorParkingLot parkingLot;
 
-    public static ParkingLot getInstance() {
+    public static FloorParkingLot getInstance() {
         if (parkingLot == null) {
-            synchronized (ParkingLot.class) {
+            synchronized (FloorParkingLot.class) {
                 if(parkingLot == null) {
-                    parkingLot = new ParkingLot();
+                    parkingLot = new FloorParkingLot();
                 }
             }
         }
         return parkingLot;
     }
 
-    Map<ParkingSpotType, List<ParkingSpot>> vehicleTypeToParkingSpot = new HashMap<>();
-
+    List<Floor> floors= new ArrayList<>();
+    
     Payment payment;
 
     ParkingRate parkingRate = new ParkingRate();
@@ -33,22 +33,29 @@ public class ParkingLot {
         ParkingSpot assignedParkingSpot = null;
         ParkingSpotType assignParkingSpotType = null;
         List<ParkingSpot> availableParkingSpots;
-        for (ParkingSpotType parkingSpotType : parkingSpots) {
-            availableParkingSpots = vehicleTypeToParkingSpot.get(parkingSpotType);
-            if (availableParkingSpots != null && !availableParkingSpots.isEmpty()) {
-                assignedParkingSpot = availableParkingSpots.get(0);
-                availableParkingSpots.remove(0);
-                assignParkingSpotType = parkingSpotType;
-                break;
+        int floorId = -1;
+        for(Floor floor: floors) {
+            for (ParkingSpotType parkingSpotType : parkingSpots) {
+                availableParkingSpots = floor.vehicleTypeToParkingSpot.get(parkingSpotType);
+                if (availableParkingSpots != null && !availableParkingSpots.isEmpty()) {
+                    assignedParkingSpot = availableParkingSpots.get(0);
+                    availableParkingSpots.remove(0);
+                    assignParkingSpotType = parkingSpotType;
+                    floorId = floor.id;
+                    break;
+                }
             }
+            if(floorId > 0)
+                break;
         }
 
         if (assignedParkingSpot == null) {
             System.out.printf("Parking are full for {%s} type.", vehicle.getVehicleType());
             System.out.println("");
+            return null;
         }
-
-        return new ParkingTicket(vehicle, assignedParkingSpot, assignParkingSpotType);
+        System.out.printf("Assigned Parking at {%d} floor, {%s} type.", floorId, vehicle.getVehicleType());
+        return new ParkingTicket(vehicle, assignedParkingSpot, assignParkingSpotType, floorId);
     }
 
     public boolean validateTicket(ParkingTicket parkingTicket) {
@@ -61,21 +68,22 @@ public class ParkingLot {
         main.java.parking.Payment p = (fee > 10) ? new CreditCard(fee) : new Cash(fee);
         p.initiateTransaction();
         parkingTicket.setStatus(TicketStatus.PAID);
-        vehicleTypeToParkingSpot.get(parkingTicket.getParkingSpotType()).add(parkingTicket.getParkingSpot());
+        Optional<Floor> first = floors.stream().filter(f -> f.id == parkingTicket.floorId).findFirst();
+        first.get().vehicleTypeToParkingSpot.get(parkingTicket.getParkingSpotType()).add(parkingTicket.getParkingSpot());
         return true;
     }
 
 
-    public void addSpot(ParkingSpot parkingSpot) {
-        vehicleTypeToParkingSpot.putIfAbsent(parkingSpot.getParkingSpotType(), new ArrayList<>());
-        vehicleTypeToParkingSpot.get(parkingSpot.getParkingSpotType()).add(parkingSpot);
-    }
+
 
 
     public void addDisplayBoard(DisplayBoard board) {
         this.displayBoard = board;
     }
 
+    public void addFloor(Floor floor) {
+        floors.add(floor);
+    }
 
 //    public List<ParkingSpot> getAllSpots() {
 //    }

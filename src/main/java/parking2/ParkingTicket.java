@@ -17,6 +17,8 @@ public class ParkingTicket {
     private ParkingSpot parkingSpot;
     private ParkingSpotType parkingSpotType;
 
+    int floorId;
+
     public ParkingTicket(Vehicle vehicle, ParkingSpot parkingSpot, ParkingSpotType parkingSpotType) {
         this.vehicle = vehicle;
         this.entry = new Date();
@@ -24,6 +26,16 @@ public class ParkingTicket {
         this.id = ticketNo.getAndIncrement();
         this.parkingSpot = parkingSpot;
         this.parkingSpotType = parkingSpotType;
+    }
+
+    public ParkingTicket(Vehicle vehicle, ParkingSpot parkingSpot, ParkingSpotType parkingSpotType, int floorId) {
+        this.vehicle = vehicle;
+        this.entry = new Date();
+        this.status = TicketStatus.ISSUED;
+        this.id = ticketNo.getAndIncrement();
+        this.parkingSpot = parkingSpot;
+        this.parkingSpotType = parkingSpotType;
+        this.floorId = floorId;
     }
 
     public Vehicle getVehicle() {

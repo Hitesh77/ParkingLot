@@ -8,6 +8,6 @@ public class Exit {
     }
 
     public boolean validate(ParkingTicket parkingTicket) {
-        return ParkingLot.getInstance().validateTicket(parkingTicket);
+        return FloorParkingLot.getInstance().validateTicket(parkingTicket);
     }
 }

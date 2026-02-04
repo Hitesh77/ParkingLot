@@ -9,7 +9,7 @@ public class Entry {
     }
 
     public ParkingTicket getTicket(Vehicle vehicle) {
-        return ParkingLot.getInstance().getTicket(vehicle);
+        return FloorParkingLot.getInstance().getTicket(vehicle);
     }
 
 }
